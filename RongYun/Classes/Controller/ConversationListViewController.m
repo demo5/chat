@@ -45,7 +45,6 @@
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
     
-    
     [self.tabBarController.tabBar setHidden:NO];
     
     //清除多余的分割线
@@ -76,8 +75,17 @@
                atIndexPath:(NSIndexPath *)indexPath{
     
     ChatViewController *chatvc = [[ChatViewController alloc] initWithConversationType:ConversationType_PRIVATE targetId:model.senderUserId];
-    chatvc.title = model.senderUserId;
-    
+    BmobQuery *bquery = [BmobQuery queryWithClassName:@"_User"];
+    [bquery getObjectInBackgroundWithId:model.senderUserId block:^(BmobObject *object, NSError *error) {
+        if (!error) {
+            if (object) {
+                chatvc.title = [object objectForKey:@"nickname"];
+            }
+        }else{
+            
+        }
+    }];
+
     [self.navigationController pushViewController:chatvc animated:YES];
     
 }
@@ -94,6 +102,14 @@
     [super didReceiveMessageNotification:notification];
     
     [self refreshConversationTableViewIfNeeded];
+}
+/*!
+ 即将更新未读消息数的回调
+ 
+ @discussion 当收到消息或删除会话时，会调用此回调，您可以在此回调中执行未读消息数相关的操作。
+ */
+- (void)notifyUpdateUnreadMessageCount{
+    [self.conversationListTableView reloadData];
 }
 
 @end

@@ -15,5 +15,5 @@
 #import "UserInformation.h"
 #import <RongIMKit/RongIMKit.h>
 #define ScreanWidth self.view.bounds.size.width
-
+#define DocumentPath NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).lastObject 
 #endif /* PrefixHeader_pch */

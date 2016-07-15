@@ -10,6 +10,7 @@
 #import <RongIMKit/RongIMKit.h>
 #import "RootViewController.h"
 #import "LoginViewController.h"
+#import "ConversationListViewController.h"
 
 #import "NSString+Extension.h"
 
@@ -37,9 +38,7 @@
     self.window.rootViewController = root;
     
     [self.window makeKeyAndVisible];
-    
-    
-    
+
     return YES;
 }
 /*!
@@ -52,13 +51,23 @@
  在您设置了用户信息提供者之后，SDK在需要显示用户信息的时候，会调用此方法，向您请求用户信息用于显示。
  */
 - (void)getUserInfoWithUserId:(NSString *)userId completion:(void (^)(RCUserInfo *userInfo))completion{
-
-        RCUserInfo *info = [[RCUserInfo alloc] init];
-        info.userId = userId;
-        info.name = userId;
-        info.portraitUri=@"http://c.hiphotos.baidu.com/image/h%3D200/sign=43c5dc24ce5c10383b7ec9c28210931c/e1fe9925bc315c609e3db7d185b1cb1349547760.jpg";
-        
-        return completion(info);
+    
+    RCUserInfo *info = [[RCUserInfo alloc] init];
+    BmobQuery *bquery = [BmobQuery queryWithClassName:@"_User"];
+    [bquery getObjectInBackgroundWithId:userId block:^(BmobObject *object, NSError *error) {
+        if (!error) {
+            if (object) {
+                info.userId = userId;
+                info.portraitUri = [object objectForKey:@"portraitUri"];
+                info.name = [object objectForKey:@"nickname"];
+            }
+        }else{
+            
+            
+        }
+    }];
+    [[ConversationListViewController sharedInstance] refreshConversationTableViewIfNeeded];
+    return completion(info);
 }
 
 

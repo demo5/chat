@@ -19,7 +19,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self notifyUpdateUnreadMessageCount];
+//    [self notifyUpdateUnreadMessageCount];
 }
 -(void)viewWillAppear:(BOOL)animated{
     [self.tabBarController.tabBar setHidden:YES];
@@ -27,7 +27,7 @@
 - (void)didSendMessage:(NSInteger)stauts
                content:(RCMessageContent *)messageCotent{
     
-    [[ConversationListViewController sharedInstance] refreshConversationTableViewIfNeeded];
+//    [[ConversationListViewController sharedInstance] refreshConversationTableViewIfNeeded];
 }
 
 

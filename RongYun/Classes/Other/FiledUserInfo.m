@@ -58,8 +58,7 @@
                                 
                                 //归档------------------------------
                                 NSLog(@"总的好友的信息--------:%@",userFriendsDic);
-                                NSString *docPath = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-                                NSString *path = [docPath stringByAppendingPathComponent:[NSString stringWithFormat:@"user_%@.plist", currentUser.objectId]];
+                                NSString *path = [DocumentPath stringByAppendingPathComponent:[NSString stringWithFormat:@"user_%@.plist", currentUser.objectId]];
                                 
                                 
                                 NSLog(@"路径：-------%@",path);

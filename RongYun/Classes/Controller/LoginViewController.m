@@ -11,9 +11,10 @@
 #import "FiledUserInfo.h"
 #import "GetToken.h"
 #import "RootViewController.h"
-@interface LoginViewController ()
-@property (weak, nonatomic) IBOutlet UITextField *username;
-@property (weak, nonatomic) IBOutlet UITextField *password;
+
+@interface LoginViewController ()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
+@property (strong, nonatomic)UITextField *username;
+@property (strong, nonatomic)UITextField *password;
 
 @property (nonatomic,strong) NSString *token;
 
@@ -21,11 +22,35 @@
 
 @implementation LoginViewController
 
+-(instancetype)init{
+    self = [super init];
+    if (self) {
+        self.view.backgroundColor = [UIColor colorWithPatternImage:[[UIImage imageNamed:@"background"] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal] ];
+        [self.loginBtn.layer setCornerRadius:10.0f];
+        [self.loginBtn.layer setBorderWidth:1.0f];
+        [self.loginBtn.layer setBorderColor:[UIColor clearColor].CGColor];
+
+        [self.tableview.layer setCornerRadius:10.0f];
+        self.tableview.dataSource = self;
+        self.tableview.delegate = self;
+        
+        self.username = [[UITextField alloc] initWithFrame:CGRectMake(10, 0, 280, 44)];
+        self.username.placeholder = @"用户名";
+        self.password = [[UITextField alloc] initWithFrame:CGRectMake(10, 0, 280, 44)];
+        self.password.placeholder = @"密码";
+        [self.password setSecureTextEntry:YES];
+        
+        [self.imageview.layer setMasksToBounds:YES];
+        [self.imageview.layer setCornerRadius:75.0f];
+    }
+    
+    return self;
+}
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
    
-    
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -64,9 +89,6 @@
                         BmobObject *obj1 = [BmobObject objectWithoutDataWithClassName:object.className objectId:object.objectId];
                         //设置token
                         [obj1 setObject:self.token forKey:@"token"];
-                        //获取nickname
-                        
-                        [UserInformation sharedInstance].nickname =[obj1 objectForKey:@"nickname"];
                         
                         //异步更新数据
                         [obj1 updateInBackground];
@@ -148,9 +170,15 @@
             [self presentViewController:root animated:YES completion:^{
                 
             }];
-            NSLog(@"登陆成功。当前登录的用户ID：%@", userId);
-            //登陆成功后归档用户信息储存本地
-             [[[FiledUserInfo alloc] init] fileUserInfoAndFriends];
+            
+            
+            if (![[NSFileManager defaultManager] fileExistsAtPath:[DocumentPath stringByAppendingFormat:@"/user_%@.plist",userId]]) {
+                //登陆成功后归档用户信息储存本地
+                [[[FiledUserInfo alloc] init] fileUserInfoAndFriends];
+            }
+            
+            
+            
         });
         
     } error:^(RCConnectErrorCode status) {
@@ -166,18 +194,32 @@
 
 
 
+#pragma mark - table view data source
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 2;
+}
 
-
-
-
-
-
-
-
-
-
-
-
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    static NSString *ID = @"ID";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
+        cell.backgroundColor = [UIColor clearColor];
+    }
+    if (indexPath.row == 0) {
+//        [cell addSubview:self.username];
+        [cell.contentView addSubview:self.username];
+//        cell.imageView.image = [UIImage imageNamed:@"default_portrait.png"];
+    }else{
+//        [cell addSubview:self.password];
+        [cell.contentView addSubview:self.password];
+        
+//        cell.imageView.image = [UIImage imageNamed:@"default_portrait.png"];
+    }
+   
+    return cell;
+}
 
 
 
